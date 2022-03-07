@@ -56,16 +56,30 @@ class Shop1
         $order = gets.chomp
         $order = $order.split(/\,/)
         count = $order.uniq.map do |e|
-            [e.to_s, frequency(e)]
+            [e, frequency(e)]
         end
-        a = apple_price(count[0][1].to_i)
-        ba = banana_price(count[1][1].to_i)
-        br = bread_price(count[2][1].to_i)
-        m = milk_price(count[3][1].to_i) 
-        total = a + ba + br + m 
-        puts "Total: %0.2f" % [total]
+        bill = []
+        bill.push(apple_price(count[0][1].to_i))
+        bill.push(banana_price(count[1][1].to_i))
+        bill.push(bread_price(count[2][1].to_i))
+        bill.push(milk_price(count[3][1].to_i)) 
+        puts "Item\tQuantity\tPrice"
+        puts "--------------------------------------"
+        total = 0;
+        i = 0;
+        $len = count.size
+        loop do
+            break if i == $len
+            total += bill[i]
+            print count[i][0]
+            print "\t#{count[i][1]}"
+            print "\t\t%0.2f" % [bill[i]]
+            puts 
+            i += 1
+        end
+        puts "Total: $%0.2f" % [total]
         if $discount != 0
-            puts "You saved %0.2f today" % [$discount]
+            puts "You saved $%0.2f today" % [$discount]
         end
      end
 end
