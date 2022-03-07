@@ -4,6 +4,7 @@ $bread_price = 2.17
 $apple_price = 0.89 
 $banana_price = 0.99
 $discount = 0
+$item_count = {"apple"=>0, "banana"=>0, "bread"=>0, "milk"=>0}
 
 module Store
     # module for all calculations
@@ -55,26 +56,26 @@ class Shop1
         puts "Please enter all the items purchased separated by a comma"
         $order = gets.chomp
         $order = $order.split(/\,/)
-        count = $order.uniq.map do |e|
-            [e, frequency(e)]
+        $order.uniq.map do |e|
+            $item_count[e] = frequency(e)
         end
+        # puts $item_count["milk"]
         bill = []
-        bill.push(apple_price(count[0][1].to_i))
-        bill.push(banana_price(count[1][1].to_i))
-        bill.push(bread_price(count[2][1].to_i))
-        bill.push(milk_price(count[3][1].to_i)) 
+        bill.push(apple_price($item_count["apple"])) if $item_count["apple"] != 0
+        bill.push(banana_price($item_count["banana"])) if $item_count["banana"] !=0
+        bill.push(bread_price($item_count["bread"])) if $item_count["bread"] != 0
+        bill.push(milk_price($item_count["milk"])) if $item_count["milk"] != 0
+        # puts $item_count.size
         puts "Item\tQuantity\tPrice"
         puts "--------------------------------------"
         total = 0;
         i = 0;
-        $len = count.size
-        loop do
-            break if i == $len
+        $len = $item_count.size
+        
+        $item_count.each do |key, value|
+            next if value == 0
+            puts "#{key.capitalize}\t#{value}\t\t%0.2f" % [bill[i]]
             total += bill[i]
-            print count[i][0]
-            print "\t#{count[i][1]}"
-            print "\t\t%0.2f" % [bill[i]]
-            puts 
             i += 1
         end
         puts "Total: $%0.2f" % [total]
