@@ -4,6 +4,7 @@ $bread_price = 2.17
 $apple_price = 0.89 
 $banana_price = 0.99
 $discount = 0
+$bill = []
 $item_count = {"apple"=>0, "banana"=>0, "bread"=>0, "milk"=>0}
 
 module Store
@@ -43,7 +44,7 @@ module Store
 end
 
 class Shop1
-    # class to 
+    # class for a shop
     include Store
     def frequency(item)
         c = $order.select do |e|
@@ -51,21 +52,29 @@ class Shop1
         end 
         c.size
      end
+
+     # method to save amount for each item
+     def billarray
+        $bill.push(apple_price($item_count["apple"])) if $item_count["apple"] != 0
+        $bill.push(banana_price($item_count["banana"])) if $item_count["banana"] !=0
+        $bill.push(bread_price($item_count["bread"])) if $item_count["bread"] != 0
+        $bill.push(milk_price($item_count["milk"])) if $item_count["milk"] != 0
+     end
      
+     # method to get data from user
      def getdata
         puts "Please enter all the items purchased separated by a comma"
         $order = gets.chomp
-        $order = $order.split(/\,/)
+        $order = $order.gsub(/\s+/,"").split(/\,/)
         $order.uniq.map do |e|
             $item_count[e] = frequency(e)
         end
-        # puts $item_count["milk"]
-        bill = []
-        bill.push(apple_price($item_count["apple"])) if $item_count["apple"] != 0
-        bill.push(banana_price($item_count["banana"])) if $item_count["banana"] !=0
-        bill.push(bread_price($item_count["bread"])) if $item_count["bread"] != 0
-        bill.push(milk_price($item_count["milk"])) if $item_count["milk"] != 0
-        # puts $item_count.size
+        billarray
+        display
+     end
+
+     # method to display bill
+     def display
         puts "Item\tQuantity\tPrice"
         puts "--------------------------------------"
         total = 0;
@@ -74,8 +83,8 @@ class Shop1
         
         $item_count.each do |key, value|
             next if value == 0
-            puts "#{key.capitalize}\t#{value}\t\t%0.2f" % [bill[i]]
-            total += bill[i]
+            puts "#{key.capitalize}\t#{value}\t\t%0.2f" % [$bill[i]]
+            total += $bill[i]
             i += 1
         end
         puts "Total: $%0.2f" % [total]
